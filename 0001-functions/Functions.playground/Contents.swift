@@ -48,11 +48,18 @@ precedencegroup ForwardComposition {
 }
 infix operator >>>: ForwardComposition
 
+
 func >>> <A, B, C>(_ f: @escaping (A) -> B, _ g: @escaping (B) -> C) -> ((A) -> C) {
-  return { a in g(f(a)) }
+    return { a in g(f(a)) }
 }
 
+
+
 2 |> incr >>> square
+
+let z = 2 |> incr >>> square // this does not return a function but an Int
+
+// 2 |> z // proves that an Int was returned not a function
 
 [1, 2, 3]
   .map(square)
