@@ -48,11 +48,16 @@ precedencegroup ForwardComposition {
 }
 infix operator >>>: ForwardComposition
 
-
+/* this is original
 func >>> <A, B, C>(_ f: @escaping (A) -> B, _ g: @escaping (B) -> C) -> ((A) -> C) {
     return { a in g(f(a)) }
 }
+*/
 
+// ss this also works since we aren't chaning types
+func >>> <A>(_ f: @escaping (A) -> A, _ g: @escaping (A) -> A) -> ((A) -> A) {
+  return { a in g(f(a)) }
+}
 
 
 2 |> incr >>> square
