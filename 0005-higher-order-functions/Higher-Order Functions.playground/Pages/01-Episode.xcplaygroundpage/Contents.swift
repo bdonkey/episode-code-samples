@@ -46,6 +46,12 @@ String.uppercased(with:)("Hello")(Locale.init(identifier: "en"))
 let uppercasedWithLocale = flip(String.uppercased(with:))
 let uppercasedWithEn = uppercasedWithLocale(Locale.init(identifier: "en"))
 
+"heel".uppercased(with: )
+let xs = "heel".uppercased(with: )
+print(xs)
+xs(Locale.init(identifier: "en"))
+
+String.uppercased(with:)("Hello")
 "Hello" |> uppercasedWithEn
 
 flip(String.uppercased)
