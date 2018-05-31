@@ -38,6 +38,10 @@ func computeAndPrint(_ x: Int) -> (Int, [String]) {
 __
 computeAndPrint(2)
 
+print("start scott")
+2 |> computeAndPrint
+print("end scott")
+
 assertEqual(
   (5, ["Computed 5"]),
   computeAndPrint(2)
@@ -53,12 +57,22 @@ assertEqual(
 
 let (computation, logs) = computeAndPrint(2)
 __
+print("logs")
 logs.forEach { print($0) }
 
 2 |> compute >>> compute
 __
+  
+print("start scott ")
+2 |> compute |> compute
+print("end scott")
+__
+print("computewEffects")
 2 |> computeWithEffect >>> computeWithEffect
-
+__
+print("start scott computeWithEffect")
+2 |> computeWithEffect |> computeWithEffect
+print("end scott")
 //computeAndPrint >>> computeAndPrint
 
 func compose<A, B, C>(

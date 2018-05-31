@@ -1,4 +1,5 @@
 
+// scott note: greet explained in ep-02
 func greet(at date: Date, name: String) -> String {
   let seconds = Int(date.timeIntervalSince1970) % 60
   return "Hello \(name)! It's \(seconds) seconds past the minute."
@@ -10,6 +11,14 @@ func greet(at date: Date) -> (String) -> String {
     return "Hello \(name)! It's \(seconds) seconds past the minute."
   }
 }
+
+// start scott
+"joe" |> greet(at: Date())
+greet(at: Date(), name: "Joe")
+let xj = greet(at: Date())
+"sally" |> xj
+
+// end scott
 
 func curry<A, B, C>(_ f: @escaping (A, B) -> C) -> (A) -> (B) -> C {
   return { a in { b in f(a, b) } }
@@ -46,10 +55,13 @@ String.uppercased(with:)("Hello")(Locale.init(identifier: "en"))
 let uppercasedWithLocale = flip(String.uppercased(with:))
 let uppercasedWithEn = uppercasedWithLocale(Locale.init(identifier: "en"))
 
+// start scott
 "heel".uppercased(with: )
 let xs = "heel".uppercased(with: )
 print(xs)
 xs(Locale.init(identifier: "en"))
+
+// end scott
 
 String.uppercased(with:)("Hello")
 "Hello" |> uppercasedWithEn
