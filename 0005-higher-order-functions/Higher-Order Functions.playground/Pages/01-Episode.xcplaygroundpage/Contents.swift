@@ -15,11 +15,26 @@ func curry<A, B, C>(_ f: @escaping (A, B) -> C) -> (A) -> (B) -> C {
   return { a in { b in f(a, b) } }
 }
 
+// start scott
+greet(at:name:)
+// end scott
+
 curry(greet(at:name:))
 greet(at:)
 
+// start scott
+Date() |> curry(greet(at:name:))
+"scott" |> (Date() |> curry(greet(at:name:)))
+
+let fx = Date() |> curry(greet(at:name:))
+"scott" |> fx
+// end scott
+
+
 curry(String.init(data:encoding:))
-  >>> { $0(.utf8) }
+ // >>> { $0(.utf8) }
+
+
 
 func flip<A, B, C>(_ f: @escaping (A) -> (B) -> C) -> (B) -> (A) -> C {
 
@@ -38,6 +53,11 @@ let uft8String = stringWithEncoding(.utf8)
 "Hello".uppercased(with: Locale.init(identifier: "en"))
 
 String.uppercased(with:)
+
+// start scott
+String.uppercased(with:)("scott")
+// end scott
+
 
 // (Self) -> (Arguments) -> ReturnType
 
@@ -73,6 +93,12 @@ func zurry<A>(_ f: () -> A) -> A {
 func map<A, B>(_ f: @escaping (A) -> B) -> ([A]) -> ([B]) {
   return { $0.map(f) }
 }
+
+// start scott
+incr
+//map
+// end scott
+
 
 map(incr)
 map(square)

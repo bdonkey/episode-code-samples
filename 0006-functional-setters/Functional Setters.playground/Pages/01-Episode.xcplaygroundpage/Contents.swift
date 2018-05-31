@@ -15,6 +15,8 @@ func first<A, B, C>(_ f: @escaping (A) -> C) -> ((A, B)) -> (C, B) {
   }
 }
 
+
+
 pair
   |> first(incr)
   |> first(String.init)
@@ -81,10 +83,17 @@ nested
 
 // ((A) -> B) -> (S) -> T
 
-// ((A) -> B) -> ((A, C)) -> (B, C)
-// ((A) -> B) -> ((C, A)) -> (C, B)
+// start scott video 14:00
+// above: a function that went from A to B and lifted it to a function that went from S to T
+// what it means: if you give me a way of transforming the part of some structure, I will give you a way of transforming the whole of the structure
+// end scott
 
-// ((A) -> B) -> ([A]) -> [B]
+
+// ((A) -> B) -> ((A, C)) -> (B, C) -- this is the First function
+// ((A) -> B) -> ((C, A)) -> (C, B) --  Second function
+
+// ((A) -> B) -> ([A]) -> [B] -- substitute arrays for tuples above and you get free version of map
+// in this sense map is a setter
 
 public func map<A, B>(_ f: @escaping (A) -> B) -> ([A]) -> [B] {
   return { xs in xs.map(f) }
@@ -94,6 +103,7 @@ public func map<A, B>(_ f: @escaping (A) -> B) -> ([A]) -> [B] {
   |> (second <<< map) { $0 + "!" }
   |> first(incr)
 
+//scott notice use of dump!!
 dump(
 [(42, ["Swift", "Objective-C"]), (1729, ["Haskell", "PureScript"])]
   |> (map <<< second <<< map) { $0 + "!" }
