@@ -32,9 +32,9 @@ func prop<Root, Value>(_ kp: WritableKeyPath<Root, Value>)
     }
 }
 
-//user
-//  |> prop(\.name)({ $0.uppercased() })
-//  <> prop(\.location.name)({ _ in "Los Angeles" })
+user
+  |> prop(\.name)({ $0.uppercased() })
+  <> prop(\.location.name)({ _ in "Los Angeles" })
 
 func prop<Root, Value>(
   _ kp: WritableKeyPath<Root, Value>,
