@@ -72,7 +72,16 @@ func prop<Root, Value>(_ kp: WritableKeyPath<Root, Value>)
 
 
 prop(\User.name) // ((String) -> String) -> (User) -> User
+
+//scott
+\User.name |> prop
+//
+
 (prop(\User.name)) { $0.uppercased() }
+
+//scott
+(\User.name |> prop) {$0.uppercased()}
+//
 
 prop(\User.location) <<< prop(\.name)
 prop(\User.location.name)
