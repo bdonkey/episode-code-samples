@@ -1,51 +1,51 @@
 
 struct Food {
-  var name: String
+    var name: String
 }
 
 struct Location {
-  var name: String
+    var name: String
 }
 
 struct User {
-  var favoriteFoods: [Food]
-  var location: Location
-  var name: String
+    var favoriteFoods: [Food]
+    var location: Location
+    var name: String
 }
 
 let user = User(
-  favoriteFoods: [Food(name: "Tacos"), Food(name: "Nachos")],
-  location: Location(name: "Brooklyn"),
-  name: "Blob"
+    favoriteFoods: [Food(name: "Tacos"), Food(name: "Nachos")],
+    location: Location(name: "Brooklyn"),
+    name: "Blob"
 )
 
 User(
-  favoriteFoods: user.favoriteFoods,
-  location: Location(name: "Los Angeles"),
-  name: user.name
+    favoriteFoods: user.favoriteFoods,
+    location: Location(name: "Los Angeles"),
+    name: user.name
 )
 
 func first<A, B, C>(_ f: @escaping (A) -> B) -> ((A, C)) -> (B, C) {
-  return { pair in
-    (f(pair.0), pair.1)
-  }
+    return { pair in
+        (f(pair.0), pair.1)
+    }
 }
 
 func userLocationName(_ f: @escaping (String) -> String) -> (User) -> User {
-  return { user in
-    User(
-      favoriteFoods: user.favoriteFoods,
-      location: Location(name: f(user.location.name)),
-      name: user.name
-    )
-  }
+    return { user in
+        User(
+            favoriteFoods: user.favoriteFoods,
+            location: Location(name: f(user.location.name)),
+            name: user.name
+        )
+    }
 }
 
 user
-  |> userLocationName { _ in "Los Angeles" }
+    |> userLocationName { _ in "Los Angeles" }
 
 user
-  |> userLocationName { $0 + "!" }
+    |> userLocationName { $0 + "!" }
 
 \User.name // WritableKeyPath<User, String>
 
@@ -57,18 +57,19 @@ copy.name = "Blobbo"
 copy[keyPath: \User.name] = "Blobbo"
 
 func prop<Root, Value>(_ kp: WritableKeyPath<Root, Value>)
-  -> (@escaping (Value) -> Value)
-  -> (Root)
-  -> Root {
-
-    return { update in
-      { root in
-        var copy = root
-        copy[keyPath: kp] = update(copy[keyPath: kp])
-        return copy
-      }
-    }
+    -> (@escaping (Value) -> Value)
+    -> (Root)
+    -> Root {
+        
+        return { update in
+            { root in
+                var copy = root
+                copy[keyPath: kp] = update(copy[keyPath: kp])
+                return copy
+            }
+        }
 }
+
 
 prop(\User.name) // ((String) -> String) -> (User) -> User
 
@@ -86,37 +87,55 @@ prop(\User.location) <<< prop(\.name)
 prop(\User.location.name)
 
 user
-  |> (prop(\.name)) { $0.uppercased() }
-  |> (prop(\.location.name)) { _ in "Los Angeles" }
+    |> (prop(\.name)) { $0.uppercased() } //scott this is update in prop definition
+    |> (prop(\.location.name)) { _ in "Los Angeles" } //scott `update` in prop def
 
 (42, user)
-  |> (second <<< prop(\.name)) { $0.uppercased() }
-  |> first(incr)
+    |> (second <<< prop(\.name)) { $0.uppercased() }
+    |> first(incr)
 
 user.favoriteFoods
-  .map { Food(name: $0.name + " & Salad") }
+    .map { Food(name: $0.name + " & Salad") }
 
 let healthier = (prop(\User.favoriteFoods) <<< map <<< prop(\.name)) {
-  $0 + " & Salad"
+    $0 + " & Salad"
 }
 
 second(healthier)
-  <> second(healthier)
-  <> (second <<< prop(\.location.name)) { _ in "Miami" }
-  <> (second <<< prop(\.name)) { "Healthy " + $0 }
-  <> first(incr)
+    <> second(healthier)
+    <> (second <<< prop(\.location.name)) { _ in "Miami" }
+    <> (second <<< prop(\.name)) { "Healthy " + $0 }
+    <> first(incr)
 
 second(
-  healthier
-    <> healthier
-    <> (prop(\.location.name)) { _ in "Miami" }
-    <> (prop(\.name)) { "Healthy " + $0 }
-  )
-  <> first(incr)
+    healthier
+        <> healthier
+        <> (prop(\.location.name)) { _ in "Miami" }
+        <> (prop(\.name)) { "Healthy " + $0 }
+    )
+    <> first(incr)
+
+// start scott
+let xf = (second(
+    healthier
+        <> healthier
+        <> healthier
+        <> (prop(\.location.name)) { _ in "Miami" }
+        <> (prop(\.name)) { "Healthy " + $0 }
+    )
+    <> first(incr))
+xf
+print(xf)
+dump(
+    (42,user) |> xf
+)
+
+// end scott
+
 
 
 public func map<A, B>(_ f: @escaping (A) -> B) -> (A?) -> B? {
-  return { $0.map(f) }
+    return { $0.map(f) }
 }
 
 
@@ -130,7 +149,7 @@ xs.map { $0 + 1 }
 
 var ys = [Int]()
 xs.forEach { x in
-  ys.append(x + 1)
+    ys.append(x + 1)
 }
 
 import Foundation
@@ -149,23 +168,23 @@ request.allHTTPHeaderFields
 let guaranteeHeaders = (prop(\URLRequest.allHTTPHeaderFields)) { $0 ?? [:] }
 
 let postJson =
-  guaranteeHeaders
-    <> (prop(\.httpMethod)) { _ in "POST" }
-    <> (prop(\.allHTTPHeaderFields) <<< map <<< prop(\.["Content-Type"])) { _ in "application/json; charset=utf-8"}
+    guaranteeHeaders
+        <> (prop(\.httpMethod)) { _ in "POST" }
+        <> (prop(\.allHTTPHeaderFields) <<< map <<< prop(\.["Content-Type"])) { _ in "application/json; charset=utf-8"}
 
 let gitHubAccept =
-  guaranteeHeaders
-    <> (prop(\.allHTTPHeaderFields) <<< map <<< prop(\.["Accept"])) { _ in "application/vnd.github.v3+json" }
+    guaranteeHeaders
+        <> (prop(\.allHTTPHeaderFields) <<< map <<< prop(\.["Accept"])) { _ in "application/vnd.github.v3+json" }
 
 let attachAuthorization = { (token: String) in
-  guaranteeHeaders
-    <> (prop(\.allHTTPHeaderFields) <<< map <<< prop(\.["Authorization"])) { _ in "Token \(token)" }
+    guaranteeHeaders
+        <> (prop(\.allHTTPHeaderFields) <<< map <<< prop(\.["Authorization"])) { _ in "Token \(token)" }
 }
 
 URLRequest(url: URL(string: "https://www.pointfree.co/hello")!)
-  |> attachAuthorization("deadbeef")
-  |> gitHubAccept
-  |> postJson
+    |> attachAuthorization("deadbeef")
+    |> gitHubAccept
+    |> postJson
 
 
 let noFavoriteFoods = (prop(\User.favoriteFoods)) { _ in [] }
@@ -174,20 +193,20 @@ let domestic = (prop(\User.location.name)) { _ in "Brooklyn" }
 let international = (prop(\User.location.name)) { _ in "Copenhagen" }
 
 extension User {
-  static let template =
-    User(
-      favoriteFoods: [Food(name: "Tacos"), Food(name: "Nachos")],
-      location: Location(name: "Brooklyn"),
-      name: "Blob"
-  )
+    static let template =
+        User(
+            favoriteFoods: [Food(name: "Tacos"), Food(name: "Nachos")],
+            location: Location(name: "Brooklyn"),
+            name: "Blob"
+    )
 }
 
 User.template
-  |> healthyEater
-  |> international
+    |> healthyEater
+    |> international
 
 let boringLocal = .template
-  |> noFavoriteFoods
-  |> domestic
+    |> noFavoriteFoods
+    |> domestic
 //: [See the next page](@next) for exercises!
 
