@@ -183,7 +183,7 @@ extension Environment {
   )
 }
 
-//Current = .mock
+Current = .mock
 
 //Current.gitHub.fetchRepos = { callback in
 //  callback(.failure(NSError.init(domain: "co.pointfree", code: 1, userInfo: [NSLocalizedDescriptionKey: "Ooops!"])))
